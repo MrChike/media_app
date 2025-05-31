@@ -39,5 +39,5 @@ base/tasks.py
 printf "%s\n" "*.log" "*.pot" "*.pyc" "__pycache__" "db.sqlite3" "media" "htmlcov/" ".tox/" ".coverage" ".coverage.*" "**/.coverage" "**/.coverage.*" ".cache" ".pytest_cache/" "nosetests.xml" "coverage.xml" "*.cover" ".hypothesis/" "site" ".vscode/*" ".history" "**/__
 pycache__/" ".env" "env/" > .gitignore
 
-pip install fastapi[standard] flake8 "celery[redis]" coverage gunicorn pymongo psycopg2-binary pytest-cov python-dotenv SQLAlchemy
+pip install fastapi[standard] flake8 "celery[redis]" coverage gunicorn pymongo psycopg2-binary pytest-cov python-dotenv SQLAlchemy pydantic-settings
 pip freeze > requirements.txt

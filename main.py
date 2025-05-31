@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(
-    title="Social Media App",
+    title="Media App",
     description="""<b>This project serves as a scaffolding tool for building Python applications that are production-ready. It emphasizes modularity, scalability, and a clear separation of concerns, providing a solid foundation for developing maintainable and well-structured codebases.</b>
     Whether you are starting a new project or looking to standardize your development practices, this scaffold helps you adopt best practices from the ground up.""",
     docs_url="/",

@@ -1,4 +1,4 @@
-# Social Media Project Setup
+# 🎬 Media APP
 
 ## 📚 Table of Contents
 
@@ -21,17 +21,31 @@ Whether you're starting a new project or looking to standardize your development
 Clone the repo and the application locally:
 
 ```bash
+# 🎬 Clone the media_app project
 git clone https://github.com/MrChike/media_app.git
 cd media_app
-cp .example.env .env # populate with your credentials
+
+# 📦 Setup environment
+cp .example.env .env  # Populate .env with your local credentials
+
+# 🐍 Create and activate virtual environment
 python -m venv env && source env/bin/activate
+
+# 📥 Install dependencies
 pip install -r requirements.txt
 
+# 🚀 Launch development server
 uvicorn main:app --reload --port 8000
+
 ```
 
-- A detailed tutorial is available here: [dev.to](https://dev.to/mrchike/fastapi-production-setup-design-deploy-like-an-expert-33df-temp-slug-5223981?preview=c1f5e43c7d8be3ed902759d1727849e00394354239b51c2ae26ef9cf0c3ce26443209cffa5527906258469f954e73a8eebc7f090d5449bcf5d192d1d)
-- Below is the project structure with the defined responsibility of each file
+## 📚 Full Tutorial Available
+
+You can follow the full walkthrough on [DEV](https://dev.to/mrchike/fastapi-production-setup-design-deploy-like-an-expert-33df-temp-slug-5223981/edit). it covers everything from project setup, architecture decisions, dependency injection, and async patterns in production-grade FastAPI apps.
+
+## 🗂️ Project Structure
+
+Below is the project layout, along with the defined responsibility of each file and folder:
 
 ```bash
 media_app/
@@ -73,8 +87,8 @@ base/                                  # Feature module
 │   ├── __init__.py
 │   └── sanity_check.py                # A friendly reminder not to loose your mind while debugging
 
-├── tests/                             # # Unit, Integration, System, and End-to-End (E2E) tests for app modules
-│   ├── __init__.py
+├── tests/                             # Unit, Integration, System, and End-to-End (E2E) tests for app modules
+│   └── base/                          # Tests specific to `base` module
 
 ├── .example.env                       # Template for environment variables (e.g., DB_URL, API_KEY)
 ├── .coveragerc                        # Code coverage settings

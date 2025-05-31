@@ -1,5 +1,25 @@
 python3 -m venv env 
-pip install fastapi==0.115.12 alembic==1.16.1 amqp==5.3.1 annotated-types==0.7.0 anyio==4.9.0 async-timeout==5.0.1 billiard==4.2.1 celery==5.5.2 certifi==2025.4.26 click==8.1.8 click-didyoumean==0.3.1 click-plugins==1.1.1 click-repl==0.3.0 coverage==7.8.1 dnspython==2.7.0 email_validator==2.2.0 exceptiongroup==1.3.0 fastapi-cli==0.0.7 flake8==7.2.0 greenlet==3.2.2 gunicorn==23.0.0 h11==0.16.0 httpcore==1.0.9 httptools==0.6.4 httpx==0.28.1 idna==3.10 iniconfig==2.1.0 Jinja2==3.1.6 kombu==5.5.3 Mako==1.3.10 markdown-it-py==3.0.0 MarkupSafe==3.0.2 mccabe==0.7.0 mdurl==0.1.2 packaging==25.0 pluggy==1.6.0 prompt_toolkit==3.0.51 psycopg2-binary==2.9.10 pycodestyle==2.13.0 pydantic==2.11.4 pydantic-settings==2.9.1 pydantic_core==2.33.2 pyflakes==3.3.2 Pygments==2.19.1 PyJWT==2.9.0 pytest==8.3.5 pytest-cov==6.1.1 python-dateutil==2.9.0.post0 python-dotenv==1.1.0 python-multipart==0.0.20 PyYAML==6.0.2 redis==5.3.0 rich==14.0.0 rich-toolkit==0.14.6 shellingham==1.5.4 six==1.17.0 sniffio==1.3.1 SQLAlchemy==2.0.41 starlette==0.46.2 tomli==2.2.1 typer==0.15.4 typing-inspection==0.4.0 typing_extensions==4.13.2 tzdata==2025.2 uvicorn==0.34.2 uvloop==0.21.0 vine==5.1.0 watchfiles==1.0.5 wcwidth==0.2.13 websockets==15.0.1
+source env/bin/activate
+
 touch .example.env .coveragerc .gitignore main.py pytest.ini requirements.txt JOURNAL.md README.md
+
+mkdir -p static templates docs \
+shared/config shared/dependencies shared/middleware shared/services/external_apis shared/services/internal_operations shared/utils \
+scripts tests base \
+&& touch shared/__init__.py \
+shared/config/__init__.py shared/config/settings.py \
+shared/dependencies/__init__.py \
+shared/middleware/__init__.py \
+shared/services/__init__.py \
+shared/utils/__init__.py \
+shared/services/external_apis/__init__.py \
+shared/services/internal_operations/__init__.py \
+scripts/__init__.py scripts/sanity_check.py \
+tests/__init__.py \
+base/__init__.py base/router.py base/controller.py base/service.py base/model.py base/schema.py base/dependencies.py base/tasks.py
+
+printf "%s\n" "*.log" "*.pot" "*.pyc" "__pycache__" "db.sqlite3" "media" "htmlcov/" ".tox/" ".coverage" ".coverage.*" "**/.coverage" "**/.coverage.*" ".cache" ".pytest_cache/" "nosetests.xml" "coverage.xml" "*.cover" ".hypothesis/" "site" ".vscode/*" ".history" "**/__
+pycache__/" ".env" "env/" > .gitignore
+
+pip install fastapi[standard] flake8 "celery[redis]" coverage gunicorn pymongo psycopg2-binary pytest-cov python-dotenv SQLAlchemy
 pip freeze > requirements.txt
-echo env > .gitignore

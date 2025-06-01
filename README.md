@@ -108,17 +108,19 @@ Run the command `uvicorn main:app --reload --port 8000` at the project root fold
 
 - 🎬 Modular architecture with separate domains for Movies, Music, and TV Series
 - 🧩 Well-defined API layer with routers, controllers, and dependency injection
-- 🧪 Unit and integration tests covering controllers and services for all modules
 - ⚙️ Centralized configuration management under shared/config with Pydantic settings
 - 🔗 Integration with external APIs (OMDb & TVMaze) in shared/services/external_apis
-- 📁 Static assets management for media posters and album covers
-- 🌐 Template rendering with HTML templates for movie, music, and TV series detail views
-- 🔒 Middleware and dependency modules for cross-cutting concerns and security
 - 📜 Comprehensive project documentation and logs maintained in docs and JOURNAL.md
-- 🔧 Utility and helper functions centralized in shared/utils for reuse across modules
+- 🐞 Graceful exception handling with low-level error logging for internal teams and user-friendly messages for a smooth experience.
+- 🧪 Unit tests covering controllers, tasks and services for all modules
 
 ## Upcoming Features
 
+- 🔧 Utility and helper functions centralized in shared/utils for reuse across modules
+- 🧪 Integration, System and E2E tests covering controllers, tasks and services for all modules
+- 📁 Static assets management for media posters and album covers
+- 🌐 Template rendering with HTML templates for movie, music, and TV series detail views
+- 🔒 Middleware and dependency modules for cross-cutting concerns and security
 - 🐳 Dockerized environment including app, Nginx reverse proxy, and Redis for Celery broker/backend
 - 🚀 Asynchronous task processing using Celery for CPU-intensive tasks offloaded to workers
 - 📦 Database management with Alembic migrations and SQLAlchemy models per module

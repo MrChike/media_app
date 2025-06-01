@@ -1,4 +1,4 @@
-from fastapi import Response, status
+from fastapi import Response
 from fastapi.responses import JSONResponse
 from .schema import MovieSchema
 from .service import MovieService
@@ -10,4 +10,4 @@ class MovieController:
     async def get_movie(self, request: MovieSchema) -> Response: # movie request is already validated by MovieSchema
         response = await self.service.get_movie_details(request)
 
-        return JSONResponse(content={"data": response}, status_code=status.HTTP_200_OK)
+        return JSONResponse(content={"data": response["data"]}, status_code=response["status_code"])

@@ -4,7 +4,7 @@
 
 - create project setup script ✅
 
-## ERRORS/FIXES
+## FIXES
 
 ```bash
 (env) mrchike@practice:~/code/contributions/education/media_app$ uvicorn main:app --reload --port 8000

@@ -111,8 +111,8 @@ Run the command `uvicorn main:app --reload --port 8000` at the project root fold
 - ⚙️ Centralized configuration management under shared/config with Pydantic settings
 - 🔗 Integration with external APIs (OMDb & TVMaze) in shared/services/external_apis
 - 📜 Comprehensive project documentation and logs maintained in docs and JOURNAL.md
-- 🐞 Graceful exception handling with low-level error logging for internal teams and user-friendly messages for a smooth experience.
 - 🧪 Unit tests covering controllers, tasks and services for all modules
+- 🐞 Graceful exception handling with low-level error logging for internal teams and user-friendly messages for a smooth experience.
 
 ## Upcoming Features
 

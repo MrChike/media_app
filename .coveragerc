@@ -1,0 +1,7 @@
+[run]
+omit =
+    */__init__.py
+    */model.py
+    */dependencies.py
+    */router.py
+    */schema.py

@@ -6,9 +6,9 @@
 - make function/method calls async for I/O-bound tasks ✅
 - introduce celery for CPU-bound tasks ✅
 - introduce Exception Handling ✅
-- Explain how code works
+- Explain how code works ✅
 - Intoduce Unit testing and coverage report
-- Write Series A Article
+- Conclude Series A Article
 
 
 ## FIXES

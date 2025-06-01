@@ -7,9 +7,9 @@
 - introduce celery for CPU-bound tasks ✅
 - introduce Exception Handling ✅
 - Explain how code works ✅
-- Intoduce Unit testing and coverage report
-- Conclude Series A Article
+- Intoduce Unit testing and coverage report ✅
 
+- Conclude Series A Article
 
 ## FIXES
 
@@ -71,4 +71,42 @@ spotify_music_api_key
     For further information visit https://errors.pydantic.dev/2.11/v/missing
 
 solution: Spotify API Key was not available in .env was causing issues so had to remove it from media_app/shared/config/settings.py AppSettings class
+```
+
+```bash
+(env) mrchike@practice:~/code/contributions/education/media_app$ pytest
+==================================================== test session starts ====================================================
+platform linux -- Python 3.10.12, pytest-8.3.5, pluggy-1.6.0
+rootdir: /home/mrchike/code/contributions/education/media_app
+configfile: pytest.ini
+testpaths: tests/
+plugins: anyio-4.9.0, cov-6.1.1
+collected 0 items / 1 error                                                                                                 
+/home/mrchike/code/contributions/education/media_app/env/lib/python3.10/site-packages/coverage/control.py:915: CoverageWarning: No data was collected. (no-data-collected)
+  self._warn("No data was collected.", slug="no-data-collected")
+
+========================================================== ERRORS ===========================================================
+_____________________________________ ERROR collecting tests/movies/test_controller.py ______________________________________
+ImportError while importing test module '/home/mrchike/code/contributions/education/media_app/tests/movies/test_controller.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.10/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests/movies/test_controller.py:4: in <module>
+    from media_app.movies.controller import MovieController
+E   ModuleNotFoundError: No module named 'media_app'
+====================================================== tests coverage =======================================================
+_____________________________________ coverage: platform linux, python 3.10.12-final-0 ______________________________________
+
+Name                   Stmts   Miss  Cover   Missing
+----------------------------------------------------
+movies/controller.py      10     10     0%   1-13
+movies/service.py         19     19     0%   1-32
+movies/tasks.py            0      0   100%
+----------------------------------------------------
+TOTAL                     29     29     0%
+================================================== short test summary info ==================================================
+ERROR tests/movies/test_controller.py
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+===================================================== 1 error in 2.68s ======================================================
 ```

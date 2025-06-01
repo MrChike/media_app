@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from movies.router import movie_router 
 
 
 app = FastAPI(
@@ -8,6 +9,8 @@ app = FastAPI(
     Whether you are starting a new project or looking to standardize your development practices, this scaffold helps you adopt best practices from the ground up.""",
     docs_url="/",
 )
+
+app.include_router(movie_router, prefix="/movies", tags=["movies"])
 
 app.add_middleware(
     CORSMiddleware,

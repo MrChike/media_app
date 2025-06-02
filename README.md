@@ -41,7 +41,7 @@ uvicorn main:app --reload --port 8000
 
 ## 📚 Full Tutorial Available
 
-You can follow the full walkthrough on [DEV](https://dev.to/mrchike/fastapi-production-setup-design-deploy-like-an-expert-33df-temp-slug-5223981/edit). it covers everything from project setup, architecture decisions, dependency injection, and async patterns in production-grade FastAPI apps.
+You can follow the full walkthrough on [DEV](https://dev.to/mrchike/fastapi-in-production-build-scale-deploy-series-a-codebase-design-ao3). it covers everything from project setup, architecture decisions, dependency injection, and async patterns in production-grade FastAPI apps.
 
 ## 🗂️ Project Structure
 

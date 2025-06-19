@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from shared.config.settings import init_mongo
 from movies.router import movie_router 
 
 
@@ -19,6 +20,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_event():
+    await init_mongo()
 
 
 if __name__ == "__main__":

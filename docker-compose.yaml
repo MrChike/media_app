@@ -1,0 +1,118 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["sh", "./entrypoint.sh"]
+    container_name: media-app
+    restart: on-failure
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - mongo
+      - redis
+      - celery
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx-proxy
+    restart: on-failure
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A shared.config.settings.redis_broker worker --loglevel=INFO --concurrency=4
+    container_name: celery-worker
+    restart: on-failure
+    depends_on:
+      - redis
+      - postgres
+      - mongo
+
+# Note: The following is the default DB configuration for standalone usage.
+# If you're using an external database connection, you can comment out the section below as needed.
+
+  redis:
+    build:
+      context: .
+      dockerfile: Dockerfile.redis
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    container_name: redis-cache-broker
+    restart: on-failure
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+
+  redisinsight:
+    # http://localhost:5540/  
+    # Log into Redis DB with Connection URL -> redis://:root@redis:6379
+    image: redis/redisinsight:2.70
+    container_name: redis-insight
+    depends_on:
+      - redis
+    ports:
+      - "5540:5540"
+
+  postgres:
+    image: postgres:16.9-bullseye
+    container_name: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+    ports:
+      - "5432:5432"
+
+  pgadmin4:
+    # http://localhost:8083/  
+    # Log into Postgres DB with Credentials -> Email: root@mailinator.com, Password: root
+    image: dpage/pgadmin4:9.4.0
+    container_name: pgadmin4
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@mailinator.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      GLOBALLY_DELIVERABLE: "True"
+    ports:
+      - "8083:80"
+
+  mongo:
+    image: mongo:7.0.5
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    # http://localhost:8081/db/root/
+    image: mongo-express:1.0.2-20-alpine3.19
+    container_name: mongo-express
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    ports:
+      - "8081:8081"

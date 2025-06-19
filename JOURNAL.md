@@ -9,6 +9,11 @@
 - Explain how code works ✅
 - Intoduce Unit testing and coverage report ✅
 - Conclude Series A Article ✅
+- Write Unit Tests for Service, Task and Controller .py modules ✅
+- Set up Docker ✅
+- Configure Database for Postgres, Mongo & Redis ✅
+- Ensure all configurations are in sync with Series A ✅
+- Figure out the best practice for redis to retrieve and create data
 
 ## FIXES
 

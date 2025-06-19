@@ -17,5 +17,7 @@ async def fetch_movie_omdb(request_url: str):
             response.raise_for_status()
             return response.json()
     except Exception as e:
+        logger.error("===========================================")
         logger.error(f"Unexpected error in fetch_movie_omdb: {e}")
+        logger.error("===========================================")
         raise

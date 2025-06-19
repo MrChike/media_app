@@ -109,3 +109,12 @@ ERROR tests/movies/test_controller.py
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ===================================================== 1 error in 2.68s ======================================================
 ```
+
+<!-- Important NB: Always open project root in Favourite IDE to prevent import modules import issues -->
+
+```bash
+docker run --name test-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=kidazda20 -e POSTGRES_DB=social_media -p 5432:5432 -d postgre
+docker-compose down --remove-orphans && docker-compose build && docker-compose up --force-recreate
+alembic revision --autogenerate -m "Migration Message"
+alembic upgrade head
+```

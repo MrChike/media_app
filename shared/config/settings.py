@@ -1,19 +1,24 @@
-from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+import logging
+from beanie import init_beanie
+from celery import Celery
+from movies.model import MovieMongo
 
 
-load_dotenv()
+logger = logging.getLogger(__name__)
 
-class AppSettings(BaseSettings):
-    omdb_movies_api_key: str
-    db_user: str
-    db_password: str
-    db_host: str
-    db_port: int
-    db_name: str
-    redis_password: str
-    redis_host: str
-    redis_port: int
+redis_broker = Celery('tasks')
+redis_broker.config_from_object('celeryconfig')
+
+# NB Makes tasks visible to celery upon app loading - The import must come after redis_broker.config_from_object('celeryconfig')
+# TODO: Find a neat way to make celery tasks visible
+import movies.tasks
 
 
-app_settings = AppSettings() # type: ignore
+async def init_mongo():
+    from shared.db.connection import MongoDB
+    await init_beanie(
+        database=MongoDB,
+        document_models=[ # NB: All Mongo DB's models created should be registered in this list
+            MovieMongo
+        ]
+    )

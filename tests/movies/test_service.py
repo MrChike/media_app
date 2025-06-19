@@ -98,10 +98,8 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         mock_mongo_instance.insert = AsyncMock()
         mock_movie_mongo.return_value = mock_mongo_instance
 
-        # Run the function
         await self.service.create_movie_external_from_cache()
 
-        # Assertions
         mock_movie_mongo.assert_called_once()
         mock_redis_get.assert_awaited_once_with("Movie Data")
         mock_mongo_instance.insert.assert_awaited_once()

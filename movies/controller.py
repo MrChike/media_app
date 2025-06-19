@@ -26,4 +26,8 @@ class MovieController:
 
     def process_cpu_bound_tasks(self) -> Response:
         self.service.trigger_cpu_bound_task()
-        return JSONResponse(content={"data": "Background Task is processing..."}, status_code=200)
+        return JSONResponse(content={"data": "Successfully Processing Time & Resource Intense Task in the background...."}, status_code=200)
+
+    async def delete_movie(self, movie_title: str) -> Response:
+        response = await self.service.delete_movie(movie_title)
+        return JSONResponse(content={"data": response["data"]}, status_code=response["status_code"])

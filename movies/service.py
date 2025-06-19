@@ -1,5 +1,6 @@
 import json
 import logging
+from sqlalchemy import select
 from shared.db.connection import RedisClient
 from shared.config.base_settings import app_settings
 from shared.utils.fetch_request_with_error_handling import fetch_request_with_error_handling
@@ -35,7 +36,9 @@ class MovieService:
             custom_user_error_response="We couldn't fetch the movie details from OMDB API. Try again in 10 minutes.",
         )
 
-        await RedisClient.set("Movie Data", json.dumps(response["data"]))
+        if response is not None:
+            movie_title = response['data']['Title'].strip()
+            await RedisClient.set(movie_title, json.dumps(response["data"]))
 
         return response
 
@@ -97,3 +100,52 @@ class MovieService:
     def trigger_cpu_bound_task(self):
         process_heavy_task.delay() # type: ignore
             
+    async def delete_movie(self, movie_title: str):
+        async def _delete_movie_from_all_db():
+            movie = movie_title.strip()
+            movie_found = False  # Track if any DB has the movie
+
+            # Redis
+            redis_movie = await RedisClient.get(movie)
+            if redis_movie:
+                movie_found = True
+                await RedisClient.delete(movie)
+            else:
+                logger.info("===============================")
+                logger.error("No cached movie found in Redis.")
+                logger.info("===============================")
+
+            # PostgreSQL
+            async for db in movies_db_session():
+                result = await db.execute(
+                    select(Movie).where(Movie.title == movie)
+                )
+                postgres_movies = result.scalars().all()
+
+                if postgres_movies:
+                    movie_found = True
+                    for postgres_movie in postgres_movies:
+                        await db.delete(postgres_movie)
+                    await db.commit()
+
+            # MongoDB
+            mongo_movies_cursor = MovieMongo.find(MovieMongo.title == movie)
+            found_in_mongo = False
+            async for mongo_movie in mongo_movies_cursor:
+                found_in_mongo = True
+                await mongo_movie.delete()
+
+            if found_in_mongo:
+                movie_found = True
+
+            # If not found in any DB, raise to trigger custom error response
+            if not movie_found:
+                raise ValueError("Movie not found in any DB.")
+
+        return await fetch_request_with_error_handling(
+            _delete_movie_from_all_db,
+            custom_user_success_response="Movie Deleted Successfully Across all DB",
+            custom_user_error_response="Movie not found in DB"
+        )
+
+    

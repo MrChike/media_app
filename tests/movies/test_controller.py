@@ -81,7 +81,7 @@ class TestMovieController(unittest.IsolatedAsyncioTestCase):
 
     def test_process_cpu_bound_tasks(self):
         expected_response_data = {
-            'data': 'Background Task is processing...'
+            'data': 'Successfully Processing Time & Resource Intense Task in the background....'
         }
 
         self.controller.service.trigger_cpu_bound_task = MagicMock()
@@ -90,6 +90,36 @@ class TestMovieController(unittest.IsolatedAsyncioTestCase):
 
         self.controller.service.trigger_cpu_bound_task.assert_called_once()
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.body), expected_response_data)
+
+    async def test_delete_movie_success(self):
+        expected_response_data = {
+            "data": "Movie Deleted Successfully Across all DB"
+        }
+
+        self.controller.service.delete_movie = AsyncMock(
+            return_value={"data": expected_response_data["data"], "status_code": 200}
+        )
+
+        response = await self.controller.delete_movie("Inception")
+
+        self.assertIsInstance(response, JSONResponse)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.body), expected_response_data)
+
+    async def test_delete_movie_not_found(self):
+        expected_response_data = {
+            "data": "Movie not found in DB"
+        }
+
+        self.controller.service.delete_movie = AsyncMock(
+            return_value={"data": expected_response_data["data"], "status_code": 501}
+        )
+
+        response = await self.controller.delete_movie("NonExistentMovie")
+
+        self.assertIsInstance(response, JSONResponse)
+        self.assertEqual(response.status_code, 501)
         self.assertEqual(json.loads(response.body), expected_response_data)
 
 

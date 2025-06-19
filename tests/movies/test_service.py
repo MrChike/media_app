@@ -22,7 +22,7 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         response = await self.service.get_movie_details(self.movie_request)
 
         mock_fetch_request_with_error_handling.assert_awaited_once()
-        mock_redis_set.assert_awaited_once_with("Movie Data", json.dumps(expected_response_data["data"]))
+        mock_redis_set.assert_awaited_once_with(expected_response_data['data']['Title'], json.dumps(expected_response_data["data"]))
         self.assertEqual(response, expected_response_data)
 
     @patch("movies.service.movies_db_session")
@@ -125,6 +125,106 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
     def test_trigger_cpu_bound_task_calls_delay(self, mock_task):
         self.service.trigger_cpu_bound_task()
         mock_task.delay.assert_called_once()
+
+    @patch("movies.service.MovieMongo")
+    @patch("movies.service.RedisClient.get", new_callable=AsyncMock)
+    @patch("movies.service.RedisClient.delete", new_callable=AsyncMock)
+    @patch("movies.service.movies_db_session")
+    @patch("movies.service.fetch_request_with_error_handling")
+    async def test_delete_movie_success(
+        self,
+        mock_fetch_request,
+        mock_db_session,
+        mock_redis_delete,
+        mock_redis_get,
+        mock_movie_mongo,
+    ):
+        # Redis mock
+        mock_redis_get.return_value = json.dumps({
+            "Title": "Inception", "Year": "2010", "Actors": "Leonardo DiCaprio"
+        })
+
+        mock_postgres_db = MagicMock()
+        mock_result = MagicMock()
+        mock_movie_instance = MagicMock()
+        mock_result.scalars.return_value.all.return_value = [mock_movie_instance]
+        mock_postgres_db.execute = AsyncMock(return_value=mock_result)
+        mock_postgres_db.delete = AsyncMock()
+        mock_postgres_db.commit = AsyncMock()
+
+        async def db_gen():
+            yield mock_postgres_db
+        mock_db_session.side_effect = db_gen
+
+        # Mongo mock
+        mock_mongo_instance = MagicMock()
+        mock_mongo_instance.delete = AsyncMock()
+        mock_cursor = AsyncMock()
+        mock_cursor.__aiter__.return_value = [mock_mongo_instance]
+        mock_movie_mongo.find.return_value = mock_cursor
+
+        # fetch_request_with_error_handling mock
+        async def fake_fetch_handler(func, **kwargs):
+            await func()
+            return {
+                "status_code": 200,
+                "data": "Movie Deleted Successfully Across all DB"
+            }
+
+        mock_fetch_request.side_effect = fake_fetch_handler
+
+        result = await self.service.delete_movie(self.movie_request.title)
+
+        mock_redis_get.assert_awaited_once_with(self.movie_request.title)
+        mock_redis_delete.assert_awaited_once_with(self.movie_request.title)
+        mock_postgres_db.execute.assert_awaited()
+        mock_postgres_db.delete.assert_awaited_once_with(mock_movie_instance)
+        mock_postgres_db.commit.assert_awaited_once()
+        mock_mongo_instance.delete.assert_awaited_once()
+
+        self.assertEqual(result["status_code"], 200)
+        self.assertEqual(result["data"], "Movie Deleted Successfully Across all DB")
+
+    @patch("movies.service.MovieMongo")
+    @patch("movies.service.RedisClient.get", new_callable=AsyncMock)
+    @patch("movies.service.movies_db_session")
+    @patch("movies.service.fetch_request_with_error_handling")
+    async def test_delete_movie_not_found(
+        self,
+        mock_fetch_request,
+        mock_db_session,
+        mock_redis_get,
+        mock_movie_mongo
+    ):
+        # Redis returns nothing
+        mock_redis_get.return_value = None
+
+        # PostgreSQL returns no movies
+        mock_db = MagicMock()
+        mock_result = MagicMock()
+        mock_result.scalars.return_value.all.return_value = []
+        mock_db.execute = AsyncMock(return_value=mock_result)
+
+        async def db_gen():
+            yield mock_db
+        mock_db_session.side_effect = db_gen
+
+        # MongoDB returns no movies
+        mock_cursor = AsyncMock()
+        mock_cursor.__aiter__.return_value = []
+        mock_movie_mongo.find.return_value = mock_cursor
+
+        # Simulate error propagation via fetch_request_with_error_handling
+        async def fake_handler(func, **kwargs):
+            with self.assertRaises(ValueError) as cm:
+                await func()
+            self.assertEqual(str(cm.exception), "Movie not found in any DB.")
+
+        mock_fetch_request.side_effect = fake_handler
+
+        await self.service.delete_movie("Nonexistent Movie")
+
+
 
 
 if __name__ == "__main__":

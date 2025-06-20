@@ -13,7 +13,11 @@
 - Set up Docker ✅
 - Configure Database for Postgres, Mongo & Redis ✅
 - Ensure all configurations are in sync with Series A ✅
-- Figure out the best practice for redis to retrieve and create data
+- Figure out the best practice for redis to retrieve and create data ✅
+- Conclude Unit Tests ✅
+- Update README.md ✅
+- Update JOURNAL.md ✅
+- Conclude Series B Article ✅
 
 ## FIXES
 
@@ -159,3 +163,5 @@ tests/movies/test_service.py
 $ git difftool 518aeb3 6dba06b movies/service.py
 
 ```
+## Remove .pyc files from project
+`find . -type d -name "__pycache__" -exec rm -r {} + -o -name "*.pyc" -exec rm -f {} +`

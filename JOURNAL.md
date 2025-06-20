@@ -122,4 +122,5 @@ docker run --name test-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=k
 docker-compose down --remove-orphans && docker-compose build && docker-compose up --force-recreate
 alembic revision --autogenerate -m "Migration Message"
 alembic upgrade head
+uvicorn main:app --reload --port 8000
 ```

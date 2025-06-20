@@ -9,21 +9,20 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         self.service = MovieService()
         self.movie_request = MovieSchema(title="Inception", actors="Leonardo DiCaprio", year=2010)
 
-    @patch("movies.service.fetch_request_with_error_handling", new_callable=AsyncMock)
+    @patch("movies.service.fetch_movie_omdb", new_callable=AsyncMock)
     @patch("movies.service.RedisClient.set", new_callable=AsyncMock)
-    async def test_get_movie_details(self, mock_redis_set, mock_fetch_request_with_error_handling):
-        expected_response_data = {
-            'status_code': 200, 
+    async def test_get_movie_details(self, mock_redis_set, mock_fetch_movie_omdb):
+        expected_response = {
             'data': {'Title': 'Inception', 'Year': '2010', 'Actors': 'Leonardo DiCaprio'}
         }
 
-        mock_fetch_request_with_error_handling.return_value = expected_response_data
+        mock_fetch_movie_omdb.return_value = expected_response['data']
 
         response = await self.service.get_movie_details(self.movie_request)
 
-        mock_fetch_request_with_error_handling.assert_awaited_once()
-        mock_redis_set.assert_awaited_once_with(expected_response_data['data']['Title'], json.dumps(expected_response_data["data"]))
-        self.assertEqual(response, expected_response_data)
+        mock_fetch_movie_omdb.assert_awaited_once()
+        mock_redis_set.assert_awaited_once_with(self.movie_request.title, json.dumps(expected_response['data']))
+        self.assertEqual(response['data'], expected_response['data'])
 
     @patch("movies.service.movies_db_session")
     async def test_create_movie_postgres(self, mock_movies_db_session):
@@ -120,7 +119,7 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         mock_fetch_request.side_effect = failing_func
 
         await self.service.create_movie_external_from_cache()
-        
+       
     @patch("movies.service.process_heavy_task")
     def test_trigger_cpu_bound_task_calls_delay(self, mock_task):
         self.service.trigger_cpu_bound_task()
@@ -188,14 +187,16 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
     @patch("movies.service.MovieMongo")
     @patch("movies.service.RedisClient.get", new_callable=AsyncMock)
     @patch("movies.service.movies_db_session")
-    @patch("movies.service.fetch_request_with_error_handling")
+    @patch("movies.service.fetch_request_with_error_handling", new_callable=AsyncMock)
     async def test_delete_movie_not_found(
         self,
         mock_fetch_request,
         mock_db_session,
         mock_redis_get,
-        mock_movie_mongo
+        mock_movie_mongo,
     ):
+        movie_title = "Nonexistent Movie"
+
         # Redis returns nothing
         mock_redis_get.return_value = None
 
@@ -214,17 +215,16 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         mock_cursor.__aiter__.return_value = []
         mock_movie_mongo.find.return_value = mock_cursor
 
-        # Simulate error propagation via fetch_request_with_error_handling
+        # Allow exception to propagate from internal handler
         async def fake_handler(func, **kwargs):
-            with self.assertRaises(ValueError) as cm:
-                await func()
-            self.assertEqual(str(cm.exception), "Movie not found in any DB.")
+            return await func()
 
         mock_fetch_request.side_effect = fake_handler
 
-        await self.service.delete_movie("Nonexistent Movie")
+        with self.assertRaises(ValueError) as cm:
+            await self.service.delete_movie(movie_title)
 
-
+        self.assertEqual(str(cm.exception), "Movie not found in any DB.")
 
 
 if __name__ == "__main__":

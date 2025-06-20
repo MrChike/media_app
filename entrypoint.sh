@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+# set -e
 
 echo "💡 Reminder:"
 echo "   If you've updated or changed models, don't forget to run:"

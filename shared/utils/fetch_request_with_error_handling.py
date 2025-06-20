@@ -23,9 +23,9 @@ async def fetch_request_with_error_handling(
         # Log internal details
         log_details = f"Error during execution of {func.__name__}: {str(e)}"
 
-        logger.error("======================================================")
+        logger.error("============== ERROR =================")
         logger.error(log_details)
-        logger.error("======================================================")
+        logger.error("============== ERROR =================")
 
         return {
             "status_code": status_code,

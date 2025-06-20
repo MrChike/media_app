@@ -3,7 +3,9 @@ import logging
 from sqlalchemy import select
 from shared.db.connection import RedisClient
 from shared.config.base_settings import app_settings
-from shared.utils.fetch_request_with_error_handling import fetch_request_with_error_handling
+from shared.utils.fetch_request_with_error_handling import (
+    fetch_request_with_error_handling,
+)
 from shared.services.external_apis.omdb_movies import fetch_movie_omdb
 from .dependencies import movies_db_session
 from .model import Movie, MovieMongo
@@ -12,6 +14,7 @@ from .tasks import process_heavy_task
 
 
 logger = logging.getLogger(__name__)
+
 
 class MovieService:
     """
@@ -25,27 +28,32 @@ class MovieService:
         self.session = movies_db_session()
 
     async def get_movie_details(self, movie: MovieSchema):
-        request_url = f"http://www.omdbapi.com/?apikey={app_settings.omdb_movies_api_key}&type=movie&t={movie.title}"
+        async def _get_movie_details():
+            request_url = f"http://www.omdbapi.com/?apikey={app_settings.omdb_movies_api_key}&type=movie&t={movie.title}"
 
-        if movie.year:
-            request_url += f"&y={movie.year}"
+            if movie.year:
+                request_url += f"&y={movie.year}"
 
-        response = await fetch_request_with_error_handling(
-            fetch_movie_omdb, 
-            request_url,
-            custom_user_error_response="We couldn't fetch the movie details from OMDB API. Try again in 10 minutes.",
+            response_data = await fetch_movie_omdb(request_url)
+
+            if 'Title' in response_data:
+                movie_title = response_data['Title'].strip()
+                await RedisClient.set(movie_title, json.dumps(response_data))
+
+            return response_data
+
+        return await fetch_request_with_error_handling(
+            _get_movie_details,
+            custom_user_error_response="We couldn't fetch the movie details from OMDB API. Please try again later."
         )
 
-        if response is not None:
-            movie_title = response['data']['Title'].strip()
-            await RedisClient.set(movie_title, json.dumps(response["data"]))
-
-        return response
 
     async def create_movie_postgres(self, request: MovieSchema):
         async def _create_movie_postgres():
             async for db in movies_db_session():
-                new_movie = Movie(title=request.title, actors=request.actors, year=request.year)
+                new_movie = Movie(title=request.title, actors=request.actors,
+                            year=request.year)
+                            
                 db.add(new_movie)
                 await db.commit()
         return await fetch_request_with_error_handling(_create_movie_postgres, status_code=201,
@@ -99,7 +107,7 @@ class MovieService:
 
     def trigger_cpu_bound_task(self):
         process_heavy_task.delay() # type: ignore
-            
+
     async def delete_movie(self, movie_title: str):
         async def _delete_movie_from_all_db():
             movie = movie_title.strip()
@@ -111,9 +119,9 @@ class MovieService:
                 movie_found = True
                 await RedisClient.delete(movie)
             else:
-                logger.info("===============================")
+                logger.error("============== ERROR =================")
                 logger.error("No cached movie found in Redis.")
-                logger.info("===============================")
+                logger.error("======================================")
 
             # PostgreSQL
             async for db in movies_db_session():
@@ -147,5 +155,3 @@ class MovieService:
             custom_user_success_response="Movie Deleted Successfully Across all DB",
             custom_user_error_response="Movie not found in DB"
         )
-
-    

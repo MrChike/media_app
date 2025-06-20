@@ -71,9 +71,9 @@ class MovieService:
             custom_user_error_response="Unable to create movie record in mongo DB right now. Please try again later."
         )
 
-    async def create_movie_external_from_cache(self):
+    async def create_movie_external_from_cache(self, movie_title: str):
         async def _create_movie_external_from_cache():
-            data = await RedisClient.get("Movie Data")
+            data = await RedisClient.get(movie_title)
 
             if not data:
                 raise ValueError("No cached movie data found in Redis.")

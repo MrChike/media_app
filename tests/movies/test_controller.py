@@ -74,7 +74,7 @@ class TestMovieController(unittest.IsolatedAsyncioTestCase):
             return_value={"data": expected_response_data['data'], "status_code": 201}
         )
 
-        response = await self.controller.create_movie_external()
+        response = await self.controller.create_movie_external(self.mock_request.title)
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(json.loads(response.body), expected_response_data)

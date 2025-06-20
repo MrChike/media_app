@@ -118,9 +118,44 @@ ERROR tests/movies/test_controller.py
 <!-- Important NB: Always open project root in Favourite IDE to prevent import modules import issues -->
 
 ```bash
-docker run --name test-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=kidazda20 -e POSTGRES_DB=social_media -p 5432:5432 -d postgre
-docker-compose down --remove-orphans && docker-compose build && docker-compose up --force-recreate
-alembic revision --autogenerate -m "Migration Message"
-alembic upgrade head
-uvicorn main:app --reload --port 8000
+$ docker-compose down --remove-orphans && docker-compose build && docker-compose up --force-recreate
+$ alembic revision --autogenerate -m "Migration Message"
+$ alembic upgrade head
+$ uvicorn main:app --reload --port 8000
+$ sudo systemctl restart docker.service
+
+# NB: If container isn't displaying content on browser
+$ docker image ls 
+
+(env) mrchike@mrchike-vm:~/code/media_app$ docker image ls
+REPOSITORY           TAG                   IMAGE ID       CREATED         SIZE
+<none>               <none>                bcf8acc6fac1   2 minutes ago   48.7MB
+media_app_redis      latest                8508c6032e82   2 minutes ago   128MB
+
+$ docker rmi bcf8acc6fac1 8508c6032e82 .....
+$ docker-compose down --remove-orphans && docker-compose build && docker-compose up --force-recreate
+```
+
+# How to check code diff with VSCode
+```bash
+$ git config --global diff.tool vscode
+$ git config --global difftool.vscode.cmd 'code --wait --diff "$LOCAL" "$REMOTE"'
+
+$ git config --global difftool.prompt false
+$ git log --oneline
+
+(env) mrchike@mrchike-vm:~/code/media_app$ git log --oneline
+6dba06b (HEAD -> series_b) partial conclusion
+518aeb3 (origin/series_b) Add delete movie endpoint
+
+(env) mrchike@mrchike-vm:~/code/media_app$ git diff --name-only 518aeb3 6dba06b
+JOURNAL.md
+entrypoint.sh
+movies/service.py
+shared/services/external_apis/omdb_movies.py
+shared/utils/fetch_request_with_error_handling.py
+tests/movies/test_service.py
+
+$ git difftool 518aeb3 6dba06b movies/service.py
+
 ```

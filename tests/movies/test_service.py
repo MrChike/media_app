@@ -66,7 +66,7 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["status_code"], 201)
         self.assertEqual(result["data"], "Movie Created in Mongo DB Successfully")
 
-    @patch("movies.service.MovieMongo")  # Patch the class only
+    @patch("movies.service.MovieMongo")
     @patch("movies.service.fetch_request_with_error_handling")
     @patch("movies.service.RedisClient.get", new_callable=AsyncMock)
     @patch("movies.service.movies_db_session")
@@ -90,6 +90,7 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         # Mock fetch_request_with_error_handling passthrough
         async def passthrough(func, **kwargs):
             return await func()
+
         mock_fetch_request.side_effect = passthrough
 
         # Patch MovieMongo instance and insert
@@ -97,10 +98,10 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         mock_mongo_instance.insert = AsyncMock()
         mock_movie_mongo.return_value = mock_mongo_instance
 
-        await self.service.create_movie_external_from_cache()
+        await self.service.create_movie_external_from_cache(self.movie_request.title)
 
         mock_movie_mongo.assert_called_once()
-        mock_redis_get.assert_awaited_once_with("Movie Data")
+        mock_redis_get.assert_awaited_once_with(self.movie_request.title)
         mock_mongo_instance.insert.assert_awaited_once()
         mock_db.add.assert_called_once()
         mock_db.commit.assert_awaited_once()
@@ -118,7 +119,7 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
 
         mock_fetch_request.side_effect = failing_func
 
-        await self.service.create_movie_external_from_cache()
+        await self.service.create_movie_external_from_cache(self.movie_request.title)
        
     @patch("movies.service.process_heavy_task")
     def test_trigger_cpu_bound_task_calls_delay(self, mock_task):
@@ -138,7 +139,7 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         mock_redis_get,
         mock_movie_mongo,
     ):
-        # Redis mock
+
         mock_redis_get.return_value = json.dumps({
             "Title": "Inception", "Year": "2010", "Actors": "Leonardo DiCaprio"
         })
@@ -155,7 +156,6 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
             yield mock_postgres_db
         mock_db_session.side_effect = db_gen
 
-        # Mongo mock
         mock_mongo_instance = MagicMock()
         mock_mongo_instance.delete = AsyncMock()
         mock_cursor = AsyncMock()
@@ -184,16 +184,16 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["status_code"], 200)
         self.assertEqual(result["data"], "Movie Deleted Successfully Across all DB")
 
+    @patch("movies.service.fetch_request_with_error_handling", new_callable=AsyncMock)
+    @patch("movies.service.movies_db_session")
     @patch("movies.service.MovieMongo")
     @patch("movies.service.RedisClient.get", new_callable=AsyncMock)
-    @patch("movies.service.movies_db_session")
-    @patch("movies.service.fetch_request_with_error_handling", new_callable=AsyncMock)
     async def test_delete_movie_not_found(
         self,
-        mock_fetch_request,
-        mock_db_session,
         mock_redis_get,
         mock_movie_mongo,
+        mock_db_session,
+        mock_fetch_request,
     ):
         movie_title = "Nonexistent Movie"
 
@@ -215,12 +215,15 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
         mock_cursor.__aiter__.return_value = []
         mock_movie_mongo.find.return_value = mock_cursor
 
-        # Allow exception to propagate from internal handler
+        # Let the internal fetch_request_with_error_handling call the function directly
         async def fake_handler(func, **kwargs):
             return await func()
-
         mock_fetch_request.side_effect = fake_handler
 
+        # Instantiate service after patching
+        self.service = MovieService()
+
+        # Run and assert exception
         with self.assertRaises(ValueError) as cm:
             await self.service.delete_movie(movie_title)
 

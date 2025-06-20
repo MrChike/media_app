@@ -20,8 +20,8 @@ class MovieController:
         response = await self.service.create_movie_mongo(request)
         return JSONResponse(content={"data": response["data"]}, status_code=response["status_code"])
 
-    async def create_movie_external(self) -> Response:
-        response = await self.service.create_movie_external_from_cache()
+    async def create_movie_external(self, movie_title: str) -> Response:
+        response = await self.service.create_movie_external_from_cache(movie_title)
         return JSONResponse(content={"data": response["data"]}, status_code=response["status_code"])
 
     def process_cpu_bound_tasks(self) -> Response:

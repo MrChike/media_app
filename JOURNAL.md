@@ -8,8 +8,9 @@
 - introduce Exception Handling ✅
 - Explain how code works ✅
 - Intoduce Unit testing and coverage report ✅
-
-- Conclude Series A Article
+- Conclude Series A Article ✅
+- Work on Series B Initialization Script ✅
+-  ✅
 
 ## FIXES
 

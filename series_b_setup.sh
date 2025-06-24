@@ -13,5 +13,5 @@ tests/movies/test_tasks.py
 python3 -m venv env 
 source env/bin/activate
 
-pip install alembic asyncpg beanie motor
+pip install fastapi[standard] flake8 "celery[redis]" coverage gunicorn pymongo psycopg2-binary pytest-cov python-dotenv SQLAlchemy pydantic-settings alembic asyncpg beanie motor
 pip freeze > requirements.txt

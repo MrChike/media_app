@@ -1,12 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from movies.router import movie_router 
+from shared.config.settings import init_mongo
+from movies.router import movie_router
 
 
 app = FastAPI(
     title="Media App",
-    description="""<b>This project serves as a scaffolding tool for building Python applications that are production-ready. It emphasizes modularity, scalability, and a clear separation of concerns, providing a solid foundation for developing maintainable and well-structured codebases.</b>
-    Whether you are starting a new project or looking to standardize your development practices, this scaffold helps you adopt best practices from the ground up.""",
+    description="""<b>This project serves as a scaffolding tool
+    for building Python applications that are production-ready.
+    It emphasizes modularity, scalability, and a clear
+    separation of concerns, providing a solid foundation for
+    developing maintainable and well-structured codebases.</b>
+    Whether you are starting a new project or looking to
+    standardize your development practices, this scaffold
+    helps you adopt best practices from the ground up.""",
     docs_url="/",
 )
 
@@ -14,11 +21,17 @@ app.include_router(movie_router, prefix="/movies", tags=["movies"])
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Use only in development. In production, specify allowed origins (e.g., domain names or IPs)
+    allow_origins=["*"],  # Use only in development.
+    # In production, specify allowed origins (e.g., domain names or IPs)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def startup_event():
+    await init_mongo()
 
 
 if __name__ == "__main__":

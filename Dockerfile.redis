@@ -1,0 +1,4 @@
+# Dockerfile.redis
+FROM redis:8.0.1-bookworm
+
+COPY redis.conf /usr/local/etc/redis/redis.conf

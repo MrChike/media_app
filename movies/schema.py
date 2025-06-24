@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional, Union
+
 
 class MovieSchema(BaseModel):
     title: str
@@ -8,6 +9,8 @@ class MovieSchema(BaseModel):
 
 
 class MovieResponseSchema(MovieSchema):
-    id: int
-
-    model_config = ConfigDict(from_attributes=True)    
+    id: Union[int, str] = Field(alias="_id")  # Handles PostgreSQL and Mongo
+    model_config = ConfigDict(
+        from_attributes=True,  # Allows ORM instances (SQLAlchemy)
+        populate_by_name=True  # Allows alias resolution (_id → id)
+    )

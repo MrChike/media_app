@@ -10,3 +10,8 @@ shared/db/connection.py \
 shared/utils/fetch_request_with_error_handling.py \
 tests/movies/test_tasks.py
 
+python3 -m venv env 
+source env/bin/activate
+
+pip install alembic asyncpg beanie motor
+pip freeze > requirements.txt

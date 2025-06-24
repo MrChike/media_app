@@ -40,7 +40,7 @@ docker-compose up --build
 
 ## 📚 Full Tutorial Available
 
-You can follow the full walkthrough of [`🔥SERIES A`](https://dev.to/mrchike/fastapi-in-production-build-scale-deploy-series-a-codebase-design-ao3), [`🛠️SERIES B`](https://dev.to/mrchike/) on **`DEV`**. it covers everything from project setup, architecture decisions, dependency injection, and async patterns in production-grade FastAPI apps.
+You can follow the full walkthrough of [`🔥SeriesA`](https://dev.to/mrchike/fastapi-in-production-build-scale-deploy-series-a-codebase-design-ao3), [`🛠️SeriesB`](https://dev.to/mrchike/) on [**DEV**](https://dev.to/mrchike/). it covers everything from project setup, architecture decisions, dependency injection, and async patterns in production-grade FastAPI apps.
 
 ## 🗂️ Project Structure
 

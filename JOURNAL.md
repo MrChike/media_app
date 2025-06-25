@@ -137,7 +137,8 @@ REPOSITORY           TAG                   IMAGE ID       CREATED         SIZE
 media_app_redis      latest                8508c6032e82   2 minutes ago   128MB
 
 $ docker rmi bcf8acc6fac1 8508c6032e82 .....
-$ docker-compose down --remove-orphans && docker-compose build && docker-compose up --force-recreate
+
+$ docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml down --remove-orphans && docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml up --build --force-recreate
 ```
 
 # How to check code diff with VSCode

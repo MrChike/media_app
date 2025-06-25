@@ -1,48 +1,6 @@
 version: "3.8"
 
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: ["sh", "./entrypoint.sh"]
-    container_name: media-app
-    restart: on-failure
-    volumes:
-      - .:/code
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
-      - mongo
-      - redis
-      - celery
-
-  nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
-    container_name: nginx-proxy
-    restart: on-failure
-    depends_on:
-      - api
-    ports:
-      - "80:80"
-
-  celery:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: celery -A shared.config.settings.redis_broker worker --loglevel=INFO --concurrency=4
-    container_name: celery-worker
-    restart: on-failure
-    depends_on:
-      - redis
-      - postgres
-      - mongo
-
-# Note: The following is the default DB configuration for standalone usage.
-# If you're using an external database connection, you can comment out the section below as needed.
 
   redis:
     build:

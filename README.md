@@ -35,7 +35,7 @@ python3 -m venv env && source env/bin/activate
 pip install -r requirements.txt
 
 # 🚀 Launch Project
-docker-compose up --build
+docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml up --build
 ```
 
 ## 📚 Full Tutorial Available
@@ -143,7 +143,7 @@ media_app/
 
 ## Usage
 
-Run `docker-compose up --build` in the root directory of the project to start the application locally.
+Run `docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml up --build` in the root directory of the project to start the application locally.
 
 ## Features
 

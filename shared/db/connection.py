@@ -4,10 +4,9 @@ from sqlalchemy.orm import declarative_base
 from motor.motor_asyncio import AsyncIOMotorClient
 from shared.config.base_settings import app_settings
 
-
 REDIS_URL = (
     f"redis://:{app_settings.redis_password}@"
-    f"{app_settings.redis_host}:{app_settings.redis_port}"
+    f"{app_settings.redis_host}:{app_settings.redis_port}/0"
 )
 
 POSTGRES_URL = (

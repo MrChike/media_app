@@ -4,22 +4,6 @@ version: "3.8"
 # Remove depends_on from api and celery service if want to connect to an external DB.
 
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: ["sh", "./entrypoint.sh"]
-    container_name: media-app
-    restart: on-failure
-    volumes:
-      - .:/code
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
-      - mongo
-      - redis
-      - celery
 
   nginx:
     build:
@@ -32,6 +16,27 @@ services:
     ports:
       - "80:80"
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["sh", "./entrypoint.sh"]
+    container_name: media-app
+    restart: on-failure
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      celery:
+        condition: service_started
+
   celery:
     build:
       context: .
@@ -40,6 +45,9 @@ services:
     container_name: celery-worker
     restart: on-failure
     depends_on:
-      - redis
-      - postgres
-      - mongo
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy

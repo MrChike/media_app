@@ -117,6 +117,38 @@ TOTAL                     29     29     0%
 ERROR tests/movies/test_controller.py
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ===================================================== 1 error in 2.68s ======================================================
+
+
+Step 1/6 : FROM python:3.12-alpine
+ ---> 2d6c23e3d401
+Step 2/6 : WORKDIR /code
+ ---> Running in 1d042334119f
+ ---> Removed intermediate container 1d042334119f
+ ---> a77be17e6d54
+Step 3/6 : COPY ./requirements.txt /
+ ---> 4cda42078333
+Step 4/6 : RUN pip install --root-user-action=ignore --upgrade pip
+ ---> Running in 047c2aba37ba
+Requirement already satisfied: pip in /usr/local/lib/python3.12/site-packages (25.0.1)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x71a210e79b80>: Failed to establish a new connection: [Errno -3] Try again')': /simple/pip/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x71a20fbdbfb0>: Failed to establish a new connection: [Errno -3] Try again')': /simple/pip/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x71a20fc5c080>: Failed to establish a new connection: [Errno -3] Try again')': /simple/pip/
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x71a20fc5c2c0>: Failed to establish a new connection: [Errno -3] Try again')': /simple/pip/
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x71a20fc5c500>: Failed to establish a new connection: [Errno -3] Try again')': /simple/pip/
+ ---> Removed intermediate container 047c2aba37ba
+ ---> 2a195dad4461
+Step 5/6 : RUN pip install --root-user-action=ignore -r /requirements.txt
+ ---> Running in 14a44d77e9f2
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7361446ef5c0>: Failed to establish a new connection: [Errno -3] Try again')': /simple/alembic/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7361463430e0>: Failed to establish a new connection: [Errno -3] Try again')': /simple/alembic/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7361446efb30>: Failed to establish a new connection: [Errno -3] Try again')': /simple/alembic/
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7361446efd40>: Failed to establish a new connection: [Errno -3] Try again')': /simple/alembic/
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0x7361446eff20>: Failed to establish a new connection: [Errno -3] Try again')': /simple/alembic/
+ERROR: Could not find a version that satisfies the requirement alembic==1.16.2 (from versions: none)
+ERROR: No matching distribution found for alembic==1.16.2
+The command '/bin/sh -c pip install --root-user-action=ignore -r /requirements.txt' returned a non-zero code: 1
+
+Solution: sudo systemctl restart docker
 ```
 
 <!-- Important NB: Always open project root in Favourite IDE to prevent import modules import issues -->
@@ -127,6 +159,7 @@ $ alembic revision --autogenerate -m "Migration Message"
 $ alembic upgrade head
 $ uvicorn main:app --reload --port 8000
 $ sudo systemctl restart docker.service
+$ sudo shutdown -r now
 
 # NB: If container isn't displaying content on browser
 $ docker image ls 
@@ -138,7 +171,11 @@ media_app_redis      latest                8508c6032e82   2 minutes ago   128MB
 
 $ docker rmi bcf8acc6fac1 8508c6032e82 .....
 
-$ docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml down --remove-orphans && docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml up --build --force-recreate
+$ docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml down --remove-orphans &&  docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml up --build --force-recreate
+
+$ docker rmi -f media_app_nginx:latest media_app_api:latest media_app_celery:latest media_app_redis:latest
+
+$ docker-compose -f docker-compose.db.yaml down --remove-orphans && docker-compose -f docker-compose.db.yaml up
 ```
 
 # How to check code diff with VSCode

@@ -3,9 +3,11 @@ set -e
 
 echo "Running as user: $(whoami)"
 
+echo ""
 echo "💡 Reminder:"
 echo "   If you've updated or changed models, don't forget to run:"
 echo "   👉 alembic revision --autogenerate -m 'YOUR MIGRATION MESSAGE'"
+echo ""
 
 echo ""
 echo "🚀 Running Alembic migrations..."

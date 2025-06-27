@@ -1,19 +1,14 @@
-from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+from beanie import init_beanie
+from celery import Celery
+from movies.model import MongoMovie
 
 
-load_dotenv()
-
-class AppSettings(BaseSettings):
-    omdb_movies_api_key: str
-    db_user: str
-    db_password: str
-    db_host: str
-    db_port: int
-    db_name: str
-    redis_password: str
-    redis_host: str
-    redis_port: int
-
-
-app_settings = AppSettings() # type: ignore
+async def init_mongo():
+    from shared.db.connection import MongoDB
+    await init_beanie(
+        database=MongoDB,
+        # NB: All Mongo DB's models created should be registered in this list
+        document_models=[
+            MongoMovie
+        ]
+    )

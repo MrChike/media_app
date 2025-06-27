@@ -1,6 +1,6 @@
 #!/bin/bash
 
-touch celeryconfig.py docker-compose.api.yaml docker-compose.db.yaml Dockerfile Dockerfile.nginx Dockerfile.redis nginx.conf redis.conf entrypoint.sh
+touch celeryconfig.py docker-compose.api.yaml docker-compose.db.yaml Dockerfile Dockerfile.nginx nginx.conf entrypoint.sh
 
 cp .example.env .env
 rm shared/utils/fetch_request_with_error_handlling.py

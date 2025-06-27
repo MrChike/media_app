@@ -22,7 +22,7 @@ Clone the repo and the application locally:
 
 ```bash
 # 🎬 Clone the media_app project
-git clone https://github.com/MrChike/media_app.git
+git clone --branch=seriesA https://github.com/MrChike/media_app.git
 cd media_app
 
 # 📦 Setup environment

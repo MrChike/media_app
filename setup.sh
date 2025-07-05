@@ -7,7 +7,7 @@ printf "# OMDb API Configuration\n# Sign up at https://www.omdbapi.com/apikey.as
 
 cp .example.env .env
 
-mkdir -p static templates \
+mkdir -p static templates docs \
 shared/config \
 shared/dependencies \
 shared/middleware \
@@ -49,5 +49,4 @@ printf "%s\n" "*.log" "*.pot" "*.pyc" "__pycache__" "db.sqlite3" "media" "htmlco
 pycache__/" ".env" "env/" > .gitignore
 
 pip install fastapi[standard] flake8 "celery[redis]" coverage gunicorn pymongo psycopg2-binary pytest-cov python-dotenv SQLAlchemy pydantic-settings
-pip install mkdocs && mkdocs new docs && cd docs && mkdocs build && cd ..
 pip freeze > requirements.txt

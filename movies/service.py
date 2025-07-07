@@ -149,9 +149,6 @@ class MovieService:
             custom_user_error_response="Movie Record not Found!"
         )
 
-    def trigger_cpu_bound_task(self):
-        process_heavy_task.delay()  # type: ignore
-
     async def delete_movie(self, movie_title: str):
         async def _delete_movie_from_all_db():
             movie = movie_title.strip().replace(' ', '_').lower()
@@ -201,3 +198,6 @@ class MovieService:
             ),
             custom_user_error_response="Movie not found in DB"
         )
+
+    def trigger_cpu_bound_task(self):
+        process_heavy_task.delay()  # type: ignore

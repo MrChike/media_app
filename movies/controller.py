@@ -39,6 +39,13 @@ class MovieController:
             status_code=response["status_code"]
         )
 
+    async def delete_movie(self, movie_title: str) -> Response:
+        response = await self.service.delete_movie(movie_title)
+        return JSONResponse(
+            content={"data": response["data"]},
+            status_code=response["status_code"]
+        )
+
     def process_cpu_bound_tasks(self) -> Response:
         self.service.trigger_cpu_bound_task()
         return JSONResponse(
@@ -49,11 +56,4 @@ class MovieController:
                 )
             },
             status_code=200
-        )
-
-    async def delete_movie(self, movie_title: str) -> Response:
-        response = await self.service.delete_movie(movie_title)
-        return JSONResponse(
-            content={"data": response["data"]},
-            status_code=response["status_code"]
         )

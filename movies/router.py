@@ -33,16 +33,16 @@ class MovieRouter(APIRouter):
             methods=["POST"]
         )
         self.add_api_route(
-            path="/process-heavy-task/",
-            summary="Process Time & Resource Consuming Tasks with Celery",
-            endpoint=self.process_heavy_task,
-            methods=["POST"]
-        )
-        self.add_api_route(
             path="/delete-movie/{movie_title}",
             summary="Delete Movie from Redis, Postgres & MongoDB",
             endpoint=self.delete_movie,
             methods=["DELETE"]
+        )
+        self.add_api_route(
+            path="/process-heavy-task/",
+            summary="Process Time & Resource Consuming Tasks with Celery",
+            endpoint=self.process_heavy_task,
+            methods=["POST"]
         )
 
     async def get_movie(self, request: Annotated[MovieSchema, Query()]):
@@ -63,11 +63,11 @@ class MovieRouter(APIRouter):
     ):
         return await self.controller.create_movie_external(request)
 
-    def process_heavy_task(self):
-        return self.controller.process_cpu_bound_tasks()
-
     async def delete_movie(self, movie_title: Annotated[str, Path()]):
         return await self.controller.delete_movie(movie_title)
+
+    def process_heavy_task(self):
+        return self.controller.process_cpu_bound_tasks()
 
 
 movie_router = MovieRouter()

@@ -1,0 +1,71 @@
+site_name: Media App Docs
+site_url: http://localhost:8000
+repo_name: MrChike/media_app
+repo_url: https://github.com/MrChike/media_app
+theme:
+  name: material
+  # NB: logo.png should be created under docs/assets/images/
+  # This is what makes it visible under site/assets/images/
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
+  icon:
+    repo: octicons/mark-github-24
+  font:
+    text: Ubuntu Mono
+  features:
+    - navigation.tabs
+    - toc.integrate
+    - content.code.copy
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme: default)"
+      primary: blue grey
+      scheme: slate
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: black
+      scheme: default 
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      primary: deep orange
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+  markdown_extensions:
+    - material.extensions.preview:
+        configurations:
+          - targets:
+              include:
+                - docs/*
+
+nav:
+  - index.md
+  - features.md
+  - architecture.md
+  - contributing.md
+  - changelog.md
+  - contact.md
+
+extra:
+  social:
+    - icon: material/linkedin
+      link: https://www.linkedin.com/in/chikeegonu/
+      name: My LinkedIn Profile
+    - icon: octicons/person-fill-24
+      link: https://mrchike.github.io/chikeegonu/
+      name: My Projects Portfolio️
+    - icon: fontawesome/brands/github
+      link: https://github.com/MrChike
+      name: My Github Profile
+
+copyright: Copyright ©️ 2025 - Infinityyyyy & Beyond 🚀 - Chike Egonu

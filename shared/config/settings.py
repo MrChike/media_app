@@ -1,5 +1,4 @@
 from beanie import init_beanie
-from celery import Celery
 from movies.model import MongoMovie
 
 

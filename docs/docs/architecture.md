@@ -57,15 +57,28 @@ media_app/
 │   ├── __init__.py
 │   └── sanity_check.py                  # A friendly reminder not to lose your mind while debugging
 
-├── tests/                               # Unit, Integration, and E2E tests
+tests/                                   # Root of all tests
+├── __init__.py
+│
+├── unit/                                # Fast, isolated logic-level tests
 │   ├── __init__.py
-│   ├── base/                            # Tests specific to `base` module
-│   │   └── __init__.py
-│   └── movies/                          # Tests for `movies` feature
+│   ├── base/
+│   │   ├── __init__.py
+│   │   └── test_service.py
+│   └── movies/
 │       ├── __init__.py
 │       ├── test_controller.py
 │       ├── test_service.py
 │       └── test_tasks.py
+│
+├── integration/                         # DB/API/network dependent tests
+│   ├── __init__.py
+│
+├── e2e/                                 # High-level, full user flow tests
+│   ├── __init__.py
+│
+├── system/                              # System resilience, performance, fault-tolerance tests
+│   ├── __init__.py
 
 ├── migrations/                          # Alembic migration files
 │   ├── env.py
@@ -76,12 +89,14 @@ media_app/
 ├── alembic.ini                          # Alembic configuration for database migrations
 ├── celeryconfig.py                      # Celery settings for async task queue
 
-├── docker-compose.yaml                  # Docker Compose file
+├── docker-compose.api.yaml              # Docker Compose API
+├── docker-compose.db.yaml               # Docker Compose DB
 ├── Dockerfile                           # Base app Dockerfile
 ├── Dockerfile.nginx                     # Nginx reverse proxy Dockerfile
 ├── nginx.conf                           # Nginx configuration
 ├── entrypoint.sh                        # Shell script to run app container
-├── setup.sh                             # Environment setup script
+├── series_a_setup.sh                    # SeriesA Environment setup script
+├── series_b_setup.sh                    # SeriesB Environment setup script
 
 ├── .example.env                         # Template for environment variables
 ├── .coveragerc                          # Code coverage settings

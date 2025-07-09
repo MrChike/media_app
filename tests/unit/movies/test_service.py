@@ -277,6 +277,11 @@ class TestMovieService(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(str(cm.exception), "Movie not found in any DB.")
 
+    @patch("movies.service.process_heavy_task")
+    def test_trigger_cpu_bound_task_calls_delay(self, mock_task):
+        self.service.trigger_cpu_bound_task()
+        mock_task.delay.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()

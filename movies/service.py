@@ -10,6 +10,7 @@ from shared.services.external_apis.omdb_movies import fetch_movie_omdb
 from .dependencies import movies_db_session
 from .model import PostgresMovie, MongoMovie
 from .schema import MovieSchema
+from .tasks import process_heavy_task
 
 
 logger = logging.getLogger(__name__)
@@ -197,3 +198,6 @@ class MovieService:
             ),
             custom_user_error_response="Movie not found in DB"
         )
+
+    def trigger_cpu_bound_task(self):
+        process_heavy_task.delay()  # type: ignore

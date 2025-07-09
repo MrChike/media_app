@@ -209,3 +209,13 @@ $ git difftool 518aeb3 6dba06b movies/service.py
 ```
 ## Remove .pyc files from project
 `find . -type d -name "__pycache__" -exec rm -r {} + -o -name "*.pyc" -exec rm -f {} +`
+
+## 🛠️ Strategy to Write Project Based Article
+- Build and complete the full project; push to main (or master)
+- Create a new branch from main and name it temp
+- Strip down the project in temp to the minimal starting point for the article
+- After writing each article section, commit changes and tag them in temp
+- Use `git difftool temp_branch complete_project_branch` to compare all files on each branch or 
+- Use `git difftool temp_branch complete_project_branch /path/to/file` to compare and extract code changes needed for each section
+- Repeat: build up the article section by section, referencing diffs and tags as needed
+

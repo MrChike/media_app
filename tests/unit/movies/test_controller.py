@@ -130,6 +130,22 @@ class TestMovieController(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 501)
         self.assertEqual(json.loads(response.body), expected_response_data)
 
+    def test_process_cpu_bound_tasks(self):
+        expected_response_data = {
+            'data': (
+                'Successfully Processing Time & Resource Intense Task '
+                'in the background....'
+            )
+        }
+
+        self.controller.service.trigger_cpu_bound_task = MagicMock()
+
+        response = self.controller.process_cpu_bound_tasks()
+
+        self.controller.service.trigger_cpu_bound_task.assert_called_once()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.body), expected_response_data)
+
 
 if __name__ == "__main__":
     unittest.main()

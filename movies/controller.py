@@ -45,3 +45,15 @@ class MovieController:
             content={"data": response["data"]},
             status_code=response["status_code"]
         )
+
+    def process_cpu_bound_tasks(self) -> Response:
+        self.service.trigger_cpu_bound_task()
+        return JSONResponse(
+            content={
+                "data": (
+                    "Successfully Processing Time & Resource Intense Task "
+                    "in the background...."
+                )
+            },
+            status_code=200
+        )

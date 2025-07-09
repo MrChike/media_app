@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from shared.config.settings import init_mongo
 from movies.router import movie_router
 
@@ -18,6 +19,7 @@ app = FastAPI(
     docs_url="/",
 )
 
+app.mount("/docs", StaticFiles(directory="docs/site", html=True), name="docs")
 app.include_router(movie_router, prefix="/movies", tags=["movies"])
 
 app.add_middleware(

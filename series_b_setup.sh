@@ -69,6 +69,7 @@ from pydantic_settings import BaseSettings
 
 load_dotenv()
 
+
 class AppSettings(BaseSettings):
     omdb_movies_api_key: str
     postgres_user: str
@@ -85,7 +86,9 @@ class AppSettings(BaseSettings):
     redis_host: str
     redis_port: str
 
+
 app_settings = AppSettings()  # type: ignore
+
 EOF
 
 # ------------------------------------------------------------------------------

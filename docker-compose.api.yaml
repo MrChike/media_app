@@ -1,0 +1,53 @@
+version: "3.8"
+
+# Note: The api and celery service depend on the db services in docker-compose.db.yaml.
+# Remove depends_on from api and celery service if want to connect to an external DB.
+
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["sh", "./entrypoint.sh"]
+    container_name: media-app
+    restart: on-failure
+    volumes:
+      - .:/code
+    ports:
+      - "0.0.0.0:8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      celery:
+        condition: service_started
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A shared.config.settings.redis_broker worker --loglevel=INFO --concurrency=4
+    container_name: celery-worker
+    restart: on-failure
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx-proxy
+    restart: on-failure
+    depends_on:
+      - api
+    ports:
+      - "0.0.0.0:80:80"

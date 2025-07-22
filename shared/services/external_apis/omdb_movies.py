@@ -3,6 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 async def fetch_movie_omdb(request_url: str):
     """
     Asynchronously makes a request to the OMDB API.
@@ -17,5 +18,7 @@ async def fetch_movie_omdb(request_url: str):
             response.raise_for_status()
             return response.json()
     except Exception as e:
+        logger.error("============== ERROR =================")
         logger.error(f"Unexpected error in fetch_movie_omdb: {e}")
+        logger.error("============== ERROR =================")
         raise

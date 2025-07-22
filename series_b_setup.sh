@@ -92,6 +92,37 @@ app_settings = AppSettings()  # type: ignore
 EOF
 
 # ------------------------------------------------------------------------------
+# Project Documentation Configuration
+# ------------------------------------------------------------------------------
+cat <<EOF > docs/mkdocs.yml
+site_name: Project Documentation
+repo_name: MrChike/media_app # Replace with your repository name
+
+nav:
+  - Home: index.md
+  - Features: features.md
+  - Architecture: architecture.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
+  - Contact: contact.md
+
+theme:
+  name: material
+  favicon: https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/materialformkdocs.svg
+  features:
+    - toc.integrate
+    - navigation.tabs
+    - navigation.footer
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra_javascript:
+  - assets/javascripts/extra.js
+
+EOF
+
+# ------------------------------------------------------------------------------
 # Create missing project files
 # ------------------------------------------------------------------------------
 touch shared/config/settings.py \

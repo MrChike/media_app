@@ -40,7 +40,7 @@ docker-compose -f docker-compose.db.yaml -f docker-compose.api.yaml up --build
 
 ## 📚 Full Tutorial Available
 
-You can follow the full walkthrough of [`🔥SeriesA`](https://dev.to/mrchike/fastapi-in-production-build-scale-deploy-series-a-codebase-design-ao3), [`🛠️SeriesB`](https://dev.to/mrchike/) on [**DEV**](https://dev.to/mrchike/). it covers everything from project setup, architecture decisions, dependency injection, and async patterns in production-grade FastAPI apps.
+You can follow the full walkthrough of [`🔥SeriesA`](https://dev.to/mrchike/fastapi-in-production-build-scale-deploy-series-a-codebase-design-ao3), [`🛠️SeriesB`](https://dev.to/mrchike/fastapi-in-production-build-scale-deploy-series-b-services-queues-containers-2i08) on [**DEV**](https://dev.to/mrchike/). it covers everything from project setup, architecture decisions, dependency injection, and async patterns in production-grade FastAPI apps.
 
 ## 🗂️ Project Structure
 
